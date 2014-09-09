@@ -5,8 +5,6 @@
 # STEG 4: http://ukm.no/wp-admin/network/admin.php?page=UKMA_ny_sesong&do=true&init=true
 # STEG 5: http://ukm.no/wp-admin/network/admin.php?page=UKMA_ny_sesong&start=0&stop=50&do=true
 
-die('BUG 2013: Fylke får site_type = kommune - FIX IT!');
-
 if(!isset($_GET['do']))
 	die('"do" mangler som get-parameter. Du husket å kjøre DB-sesong?(init)');
 
