@@ -88,6 +88,7 @@ while($monstring = mysql_fetch_assoc($monstringer)) {
 		$blogg = UKMA_SEASON_opprett_blogg($namelist, $m['pl_id'], 'kommune', $m['fylke_id'], $idlist, $season);
 	
 		echo 'Legger til brukere <br />';
+		var_dump( $brukere );
 		## LEGG TIL BRUKERNE TIL SIDEN
 		UKMA_SEASON_brukere($blogg, $brukere, $m['fylke_id'], $fylkebrukere);
 	
