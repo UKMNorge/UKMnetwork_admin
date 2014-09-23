@@ -140,7 +140,7 @@ function UKMA_SEASON_fylkesbrukere() {
 		$name = preg_replace("/[^A-Za-z0-9-]/","",
 						str_replace(array('æ','ø','å','Æ','Ø','Å'),
 									array('a','o','a','A','O','A'), 
-									$f['name'])
+									utf8_encode($f['name']))
 							  );
 		$password = UKM_ordpass();
 		$bruker = $wpdb->get_row("SELECT * FROM `ukm_brukere`
