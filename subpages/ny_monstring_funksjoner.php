@@ -231,6 +231,20 @@ function UKMA_SEASON_urlsafe($text) {
 
 	return $text;
 }
+function UKMA_SEASON_urlsafe_non_charset($text) {
+	
+	#$text = SMAS_encoding($text);
+
+	$text = htmlentities($text);
+	
+	$ut = array('&Aring;','&aring;','&Aelig;','&aelig;','&Oslash;','&oslash;','&Atilde;','&atilde','Ocedil','ocedil');
+	$inn= array('A','a','A','a','O','o','O','o','O','o');
+	$text = str_replace($ut, $inn, $text);
+	
+	$text = preg_replace("/[^A-Za-z0-9-]/","",$text);
+
+	return $text;
+}
 
 function UKMA_SEASON_rewrites($fylke, $froms, $pl_id) {
 	global $wpdb;
