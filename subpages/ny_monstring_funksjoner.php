@@ -170,6 +170,7 @@ function UKMA_SEASON_evaluer_kommuner($kommunebrukere, $fylkebrukere) {
 					echo 'ERROR: Kunne ikke opprette bruker av følgende årsak:';
 					var_dump($userid);
 					echo 'ERRORDATA: Følgende array ble gitt til wp_create_user';
+					var_dump($brukerinfo);
 				}
 				## LEGG TIL BRUKERID I FELLESARRAY + KLARTEKSTDATABASE
 				$userids[] = $brukerinfo['wp_bid'] = $userid;
