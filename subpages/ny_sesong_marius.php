@@ -154,11 +154,14 @@ function UKMA_SEASON_fylkesbrukere() {
 			$users[$f['id']] = $userIDnow;
 			remove_user_from_blog($userIDnow, 1);
 		} else {
+			// 23.09.2014 BURDE MULIGENS FLYTTES UT AV ELSE OG OVER IF
+			// Klarteksttabell mister brukernavn
 			$brukerinfo = array('b_name'=>$name,
 								'b_password'=>$password,#wp_generate_password(6,false,false),
 								'b_email'=>$email,
 								'b_kommune'=>0,
 								'b_fylke' => $f['id']);
+			// 23.09.2014 EO BURDE MULIGENS FLYTTES UT AV ELSE OG OVER IF
 			## Opprett bruker
 			echo $name . ' - ';
 			$user_id = wp_create_user( $brukerinfo['b_name'], $brukerinfo['b_password'], $brukerinfo['b_email'] );
