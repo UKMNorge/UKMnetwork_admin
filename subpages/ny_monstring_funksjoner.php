@@ -241,7 +241,7 @@ function UKMA_SEASON_urlsafe_non_charset($text) {
 	$inn= array('A','a','A','a','O','o','O','o','O','o');
 	$text = str_replace($ut, $inn, $text);
 	
-	$text = preg_replace("/[^A-Za-z0-9-]/","",$text);
+	#$text = preg_replace("/[^A-Za-z0-9-]/","",$text);
 
 	return $text;
 }
