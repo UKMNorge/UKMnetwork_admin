@@ -232,21 +232,14 @@ function UKMA_SEASON_urlsafe($text) {
 	return $text;
 }
 function UKMA_SEASON_urlsafe_non_charset($text) {
-	
 	$text = utf8_encode($text);
-	echo '<hr>';
-	var_dump( $text );
-	
 	$text = htmlentities($text);
-	var_dump( $text );
-	
+
 	$ut = array('&Aring;','&aring;','&Aelig;','&aelig;','&Oslash;','&oslash;','&Atilde;','&atilde','Ocedil','ocedil');
 	$inn= array('A','a','A','a','O','o','O','o','O','o');
 	$text = str_replace($ut, $inn, $text);
 	
-	var_dump( $text );
-	#$text = preg_replace("/[^A-Za-z0-9-]/","",$text);
-
+	$text = preg_replace("/[^A-Za-z0-9-]/","",$text);
 	return $text;
 }
 
