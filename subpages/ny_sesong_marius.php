@@ -149,7 +149,6 @@ function UKMA_SEASON_fylkesbrukere() {
 			$email = UKMA_SEASON_urlsafe($f['name']) .'@fylkefake.ukm.no';
 		}
 		
-		$name = 
 		## Om brukeren finnes, legg til ID i array og gå pent videre
 		if(username_exists( $name )) {
 			$userIDnow = username_exists($name);
