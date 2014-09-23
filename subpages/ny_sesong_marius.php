@@ -148,6 +148,11 @@ function UKMA_SEASON_fylkesbrukere() {
 			$email = UKMA_SEASON_urlsafe($f['name']) .'@fylkefake.ukm.no';
 		}
 		
+		$name = preg_replace("/[^A-Za-z0-9-]/","",
+						str_replace(array('æ','ø','å','Æ','Ø','Å'),
+									array('a','o','a','A','O','A'), 
+									$name)
+							  );
 		## Om brukeren finnes, legg til ID i array og gå pent videre
 		if(username_exists( $name )) {
 			$userIDnow = username_exists($name);
@@ -202,8 +207,12 @@ function UKMA_SEASON_monstringsinfo_kommuner($kommuner) {
 	if(is_array($kommuner))
 		foreach($kommuner as $trash => $kommune) {
 			$k = $kommune;
-			$safestring = str_replace(array('æ','ø','å','Æ','Ø','Å'), array('a','o','a','A','O','A'), $k['name']);
-			$k['url'] = preg_replace("/[^A-Za-z0-9-]/","",$safestring); #UKMA_SEASON_urlsafe($k['name']);
+			$safestring = preg_replace("/[^A-Za-z0-9-]/","",
+								str_replace(array('æ','ø','å','Æ','Ø','Å'),
+											array('a','o','a','A','O','A'), 
+											$k['name'])
+									  );
+			$k['url'] = $safestring; #UKMA_SEASON_urlsafe($k['name']);
 			$list[] = $k;
 		}
 	return $list;
