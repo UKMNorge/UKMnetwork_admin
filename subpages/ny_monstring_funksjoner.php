@@ -234,9 +234,10 @@ function UKMA_SEASON_urlsafe($text) {
 function UKMA_SEASON_urlsafe_non_charset($text) {
 	
 	#$text = SMAS_encoding($text);
-
-	$text = htmlentities($text);
 	echo '<hr>';
+	var_dump( $text );
+	
+	$text = htmlentities($text);
 	var_dump( $text );
 	
 	$ut = array('&Aring;','&aring;','&Aelig;','&aelig;','&Oslash;','&oslash;','&Atilde;','&atilde','Ocedil','ocedil');
