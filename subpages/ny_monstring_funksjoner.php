@@ -154,14 +154,15 @@ function UKMA_SEASON_evaluer_kommuner($kommunebrukere, $fylkebrukere) {
 				$email = $bruker->b_email;
 			else
 				$email = strtolower($kommune['url']).'@falsk.ukm.no';
-
-			$brukerinfo = array('b_name'=>ucfirst(strtolower($kommune['url'])),
+			
+			$brukerinfo_b_name = ucfirst(strtolower($kommune['url']));
+			$brukerinfo = array('b_name'=>$brukerinfo_b_name,
 								'b_password'=>$password,#wp_generate_password(6,false,false),
 								'b_email'=>$email,
 								'b_kommune'=>$kommune['id'],
 								'b_fylke' => $fylkebrukere);
 			
-			echo 'Bruker: '. ucfirst(strtolower($kommune['url']));
+			echo 'Bruker: '. $brukerinfo_b_name;
 			if(username_exists( $brukerinfo['b_name'] )) {
 				$userids[] = $brukerinfo['wp_bid'] = username_exists( $brukerinfo['b_name'] );
 				echo ' EKSISTERER ('. $brukerinfo['wp_bid'] .' ) <br />';

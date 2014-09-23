@@ -202,7 +202,8 @@ function UKMA_SEASON_monstringsinfo_kommuner($kommuner) {
 	if(is_array($kommuner))
 		foreach($kommuner as $trash => $kommune) {
 			$k = $kommune;
-			$k['url'] = UKMA_SEASON_urlsafe($k['name']);
+			$safestring = str_replace(array('æ','ø','å','Æ','Ø','Å'), array('a','o','a','A','O','A'), $k['name']);
+			$k['url'] = preg_replace("/[^A-Za-z0-9-]/","",$safestring); #UKMA_SEASON_urlsafe($k['name']);
 			$list[] = $k;
 		}
 	return $list;
