@@ -4,6 +4,10 @@
 ################################################
 function UKMA_SEASON_brukere($blogg, $brukere, $fylke, $fylkebrukere) {
 	## Legg til fylkesbrukeren
+	if( !is_array( $brukere )) {
+		echo 'BUG: Oppretter blogg uten bruker-array. Lokalkontakt får ikke tilgang til siden!';
+		$brukere = array();
+	}
 	$brukere[] = $fylkebrukere[$fylke];
 	
 	for($i=0; $i<sizeof($brukere); $i++) {
@@ -162,8 +166,11 @@ function UKMA_SEASON_evaluer_kommuner($kommunebrukere, $fylkebrukere) {
 			} else {
 				## OPPRETT BRUKERE
 				$userid = wp_create_user($brukerinfo['b_name'], $brukerinfo['b_password'], $brukerinfo['b_email']);
-				if(!is_numeric($userid))
+				if(!is_numeric($userid)) {
+					echo 'ERROR: Kunne ikke opprette bruker av følgende årsak:';
 					var_dump($userid);
+					echo 'ERRORDATA: Følgende array ble gitt til wp_create_user';
+				}
 				## LEGG TIL BRUKERID I FELLESARRAY + KLARTEKSTDATABASE
 				$userids[] = $brukerinfo['wp_bid'] = $userid;
 			}
