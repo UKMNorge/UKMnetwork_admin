@@ -11,4 +11,5 @@ foreach( $brukere as $bruker ) {
 	echo '<strong>ID: '. $bruker->wp_bid .'</strong><br />';
 	echo ' &nbsp; Name: '. $bruker->b_name .' <br />';
 	echo ' &nbsp; Password: '. $bruker->b_password .' <br />';
+	wp_set_password( $bruker->b_password, $bruker->wp_bid );
 }
