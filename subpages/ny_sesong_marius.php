@@ -63,7 +63,9 @@ while($monstring = mysql_fetch_assoc($monstringer)) {
 	if($m['type'] == 'kommune') {
 		echo '<h3>Oppretter lokalmønstring '.$teller.'</h3>'
 			.'NAVN: '.$m['pl_name'] . '<br />';
-			
+		
+		echo 'Mønstringen har følgende kommuner <br />';
+		echo '<pre>'; var_dump( $m['kommuner'] ); echo '</pre>';
 		## HENTER ALLE KOMMUNER I MØNSTRINGEN
 		$k = UKMA_SEASON_monstringsinfo_kommuner($m['kommuner']);
 		# Array med k[id], k[name], k[url]
@@ -87,8 +89,12 @@ while($monstring = mysql_fetch_assoc($monstringer)) {
 		echo '<br />Oppretter blogg<br />';
 		$blogg = UKMA_SEASON_opprett_blogg($namelist, $m['pl_id'], 'kommune', $m['fylke_id'], $idlist, $season);
 	
-		echo 'Legger til brukere <br />';
-		var_dump( $brukere );
+		echo 'Legger til '. (is_array( $brukere ) ? sizeof( $brukere ) : 0 ).' brukere <br />';
+		if(is_array( $brukere ) ) {
+			foreach( $brukere as $bruker_for_fun_debug ) {
+				echo ' &nbsp; BrukerID: '. $bruker_for_fun_debug .' <br />';
+			}
+		}
 		## LEGG TIL BRUKERNE TIL SIDEN
 		UKMA_SEASON_brukere($blogg, $brukere, $m['fylke_id'], $fylkebrukere);
 	
