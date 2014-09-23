@@ -92,7 +92,9 @@ while($monstring = mysql_fetch_assoc($monstringer)) {
 		echo 'Legger til '. (is_array( $brukere ) ? sizeof( $brukere ) : 0 ).' brukere <br />';
 		if(is_array( $brukere ) ) {
 			foreach( $brukere as $bruker_for_fun_debug ) {
-				echo ' &nbsp; BrukerID: '. $bruker_for_fun_debug .' <br />';
+				echo ' &nbsp; BrukerID: ';
+				var_dump($bruker_for_fun_debug);
+				echo ' <br />';
 			}
 		}
 		## LEGG TIL BRUKERNE TIL SIDEN
