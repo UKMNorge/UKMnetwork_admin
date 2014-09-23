@@ -41,6 +41,7 @@ function UKMA_add_site_admin() {
 
 	add_submenu_page( 'UKMA_site_admin', 'Opprett sesong', 'Opprett sesong', 'superadministrator', 'UKMA_ny_sesong', 'UKMA_sesong' );
 	add_submenu_page( 'UKMA_site_admin', 'Oppdater kortadresser', 'Oppdater kortadresser', 'superadministrator', 'UKMA_rewrite', 'UKMA_rewrite' );
+	add_submenu_page( 'UKMA_site_admin', 'Synkroniser passord', 'Synkroniser passord', 'superadministrator', 'UKMA_password_sync', 'UKMA_password_sync' );
 	add_submenu_page( 'UKMA_site_admin', 'Oppdater brukere', 'Oppdater brukere', 'superadministrator', 'UKMA_brukere', 'UKMA_brukere' );
 	add_submenu_page( 'UKMA_site_admin', 'Opprett m&oslash;nstring', 'Opprett m&oslash;nstring', 'superadministrator', 'UKMA_ny_monstring', 'UKMA_ny_monstring' );
 	add_submenu_page( 'UKMA_site_admin', 'Trekk ut kommune', 'Trekk ut kommune', 'superadministrator', 'UKMA_trekkut', 'UKMA_trekkut' );
@@ -92,6 +93,9 @@ function UKMA_passordsak() {
 	}
 }
 
+function UKMA_password_sync() {
+	require_once('subpages/password_sync.inc.php');
+}
 
 
 function UKMA_setOpt(){
