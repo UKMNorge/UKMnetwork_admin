@@ -138,7 +138,6 @@ function UKMA_SEASON_fylkesbrukere() {
 	## LOOPER ALLE FYLKER OG OPPRETTER BRUKER OM DEN IKKE FINNES
 	while($f = mysql_fetch_assoc($fylker)) {
 		$name = UKMA_SEASON_urlsafe_non_charset($f['name']);
-		var_dump( $name );
 
 		$password = UKM_ordpass();
 		$bruker = $wpdb->get_row("SELECT * FROM `ukm_brukere`
