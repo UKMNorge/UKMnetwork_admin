@@ -233,7 +233,7 @@ function UKMA_SEASON_urlsafe($text) {
 }
 function UKMA_SEASON_urlsafe_non_charset($text) {
 	
-	$text = SMAS_encoding($text);
+	$text = utf8_encode($text);
 	echo '<hr>';
 	var_dump( $text );
 	
