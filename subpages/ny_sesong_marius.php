@@ -137,11 +137,9 @@ function UKMA_SEASON_fylkesbrukere() {
 	$fylker = $fylker->run();
 	## LOOPER ALLE FYLKER OG OPPRETTER BRUKER OM DEN IKKE FINNES
 	while($f = mysql_fetch_assoc($fylker)) {
-		$name = preg_replace("/[^A-Za-z0-9-]/","",
-						str_replace(array('æ','ø','å','Æ','Ø','Å'),
-									array('a','o','a','A','O','A'), 
-									utf8_decode($f['name']))
-							  );
+		$name = UKMA_SEASON_urlsafe($f['name']);
+		var_dump( $name );
+
 		$password = UKM_ordpass();
 		$bruker = $wpdb->get_row("SELECT * FROM `ukm_brukere`
 									  WHERE `b_fylke` = '".$f['id']."'");
@@ -151,6 +149,7 @@ function UKMA_SEASON_fylkesbrukere() {
 			$email = UKMA_SEASON_urlsafe($f['name']) .'@fylkefake.ukm.no';
 		}
 		
+		$name = 
 		## Om brukeren finnes, legg til ID i array og gå pent videre
 		if(username_exists( $name )) {
 			$userIDnow = username_exists($name);
