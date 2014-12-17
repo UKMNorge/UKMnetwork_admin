@@ -112,7 +112,7 @@ function UKMA_rewrite() {
 
 function UKMA_rewrite_update_siteurl() {
 	global $wpdb, $wp_rewrite;
-	$sites = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->blogs"));
+	$sites = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->blogs", array()));
 	$start = (isset($_GET['start'])?$_GET['start']:150);
 	$i = 0;
 	foreach ( $sites as $site ) {
