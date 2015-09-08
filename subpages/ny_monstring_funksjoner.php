@@ -282,7 +282,9 @@ function UKMA_SEASON_evaluer_kommuner($kommunebrukere, $fylkebrukere) {
 				## LEGG TIL BRUKERID I FELLESARRAY + KLARTEKSTDATABASE
 				$userids[] = $brukerinfo['wp_bid'] = $userid;
 			}
-			echo ' <span class="badge badge-success">WP_UID: '. $brukerinfo['wp_bid'] .'</span>';
+			if( is_string( $brukerinfo['wp_bid'] ) ) {
+				echo ' <span class="badge badge-success">WP_UID: '. $brukerinfo['wp_bid'] .'</span>';
+			}
 			if(is_object($bruker)) {
 				$wpdb->update('ukm_brukere',
 							$brukerinfo,
