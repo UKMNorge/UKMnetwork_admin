@@ -278,9 +278,10 @@ function UKMA_SEASON_evaluer_kommuner($kommunebrukere, $fylkebrukere) {
 					echo '</pre>ERRORDATA: Følgende array ble gitt til wp_create_user<pre>';
 					var_dump($brukerinfo);
 					echo '</pre></div>';
+				} else {
+					## LEGG TIL BRUKERID I FELLESARRAY + KLARTEKSTDATABASE
+					$userids[] = $brukerinfo['wp_bid'] = $userid;
 				}
-				## LEGG TIL BRUKERID I FELLESARRAY + KLARTEKSTDATABASE
-				$userids[] = $brukerinfo['wp_bid'] = $userid;
 			}
 			if( is_string( $brukerinfo['wp_bid'] ) ) {
 				echo ' <span class="badge badge-success">WP_UID: '. $brukerinfo['wp_bid'] .'</span>';
