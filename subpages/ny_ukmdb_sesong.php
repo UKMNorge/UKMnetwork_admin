@@ -26,7 +26,7 @@ global $activePlaces_numRows, $activePlaces_numRowCounter, $newDeadline, $newFyl
 error_reporting(E_ALL);
 
 # DATES OF THE SEASON
-$activeSeason 			= (int)date("Y")-1;#$ss3->getConf('smartukm_season');			# INT OF THIS SEASON
+$activeSeason 			= (int)date("Y");#$ss3->getConf('smartukm_season');			# INT OF THIS SEASON
 $activeStart 			= mktime(0,0,0,11,1,($activeSeason-1));					# THE FIRST NOVEMBER THE ACTIVE SEASON
 $daysInActiveOctober 	= cal_days_in_month(CAL_GREGORIAN, 10, $activeSeason);	# THE LAST DAY OF THE ACTIVE SEASON
 $activeStop 			= mktime(0,0,0,10, $daysInActiveOctober, $activeSeason);# THE DATE OF THE LAST DAY OF THE ACTIVE SEASON
