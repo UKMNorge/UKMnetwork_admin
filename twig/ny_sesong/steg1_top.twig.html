@@ -1,0 +1,39 @@
+<div class="col-xs-12 col-sm-8">
+	<h1>Opprett ny sesong: init database</h1>
+	<p class="lead">Oppretter nye mønstringsobjekter</p>
+	
+	<h2>Init values</h2>
+	<h3>Aktiv sesong (den vi går fra)</h3>
+	<ul class="list-unstyled">
+		<li>
+			<label>Aktiv sesong ($activeSeason)</label>	{{ activeSeason }}
+		</li>
+		<li>
+			<label>Aktiv sesong startet ($activeStart)</label>	{{ activeStart|date('d.m.Y') }}
+		</li>
+	
+		<li>
+			<label>Aktiv sesong sluttet ($activeStop)</label>	{{ activeStop|date('d.m.Y') }}
+		</li>
+	</ul>
+	
+	<h3>Ny sesong (den vi går til)</h3>
+	<ul class="list-unstyled">
+		<li>
+			<label>Ny sesong ($activeSeason)</label>	{{ activeSeason }}
+		</li>
+		<li>
+			<label>Standard påmeldingsfrist ($newDeadline)</label>	{{ newDeadline|date('d.m.Y') }}
+		</li>
+	
+		<li>
+			<label>Standard videresendingsfrist ($newFylkeDeadline)</label>	{{ newFylkeDeadline }}
+		</li>
+	</ul>
+	
+	<h3>Henter nå alle mønstringer fra {{ activeSeason }}</h3>
+	<div class="alert alert-info">{{ sql|replace({'<br />':''}) }}</div>
+	
+	<h2>Sjekk at alle er opprettet</h2>
+	<p>Scroll til bunnen og se etter røde bokser (potensielle error-flagginger). Fortsett deretter til neste steg (via menyen til venstre)</p>
+</div>

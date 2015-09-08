@@ -1,0 +1,22 @@
+<fieldset>
+	<legend>{{ name }} <span class="badge">{{ id }}</span></legend>
+	<ul class="list-unstyled">
+		{% if twigdata.error != false %}
+		<li class="alert alert-danger">
+			<pre>{{ twigdata.error }}</pre>
+		</li>
+		{% endif %}
+		<li>
+			<label>E-post: </label> {{ email }}
+		</li>
+		<li>
+			<label>Passord: </label> {{ password }}
+		</li>
+		<li class="{{ existing == false ? 'alert-warning' : '' }}">
+			<label>Wordpressbruker: </label> finnes {{ existing == false ? 'ikke' : ''}}, og har fått nytt passord
+		</li>
+		<li class="{{ insert ? 'alert-warning' : '' }}">
+			<label>Bruker i klarteksttabellen: </label> finnes {{ insert ? 'ikke' : ''}}
+		</li>
+	</ul>
+</fieldset>

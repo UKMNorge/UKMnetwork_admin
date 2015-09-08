@@ -39,7 +39,9 @@ function UKMA_add_site_admin() {
 
 	add_menu_page('UKM Site-admin', 'UKM Site-admin', 'administrator', 'UKMA_site_admin', 'UKMA_site_admin_gui', 'http://ico.ukm.no/hus-menu.png', 39);
 
-	add_submenu_page( 'UKMA_site_admin', 'Opprett sesong', 'Opprett sesong', 'superadministrator', 'UKMA_ny_sesong', 'UKMA_sesong' );
+	$page_season = add_submenu_page( 'UKMA_site_admin', 'Opprett sesong', 'Opprett sesong', 'superadministrator', 'UKMA_ny_sesong', 'UKMA_sesong' );
+	add_action( 'admin_print_styles-' . $page_season, 'UKMA_scripts_and_styles' );
+
 	add_submenu_page( 'UKMA_site_admin', 'Oppdater kortadresser', 'Oppdater kortadresser', 'superadministrator', 'UKMA_rewrite', 'UKMA_rewrite' );
 	add_submenu_page( 'UKMA_site_admin', 'Synkroniser passord', 'Synkroniser passord', 'superadministrator', 'UKMA_password_sync', 'UKMA_password_sync' );
 	add_submenu_page( 'UKMA_site_admin', 'Oppdater brukere', 'Oppdater brukere', 'superadministrator', 'UKMA_brukere', 'UKMA_brukere' );
@@ -220,5 +222,10 @@ function UKMA_site_admin_gui(){
 	
 	$gui = $nav->run();
 	print $gui;
+}
+
+function UKMA_scripts_and_styles() {
+	wp_enqueue_script('WPbootstrap3_js');
+	wp_enqueue_style('WPbootstrap3_css');
 }
 ?>

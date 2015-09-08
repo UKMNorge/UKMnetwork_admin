@@ -1,15 +1,27 @@
 <?php
+	
 # STEG 1: Kopier DB ukmno_ss3 
 # STEG 2: Kopier DB ukmno_wp2012
 # STEG 3: Rydd unna gamle nettsider fra WP
 # STEG 4: http://ukm.no/wp-admin/network/admin.php?page=UKMA_ny_sesong&do=true&init=true
-# STEG 5: http://ukm.no/wp-admin/network/admin.php?page=UKMA_ny_sesong&start=0&stop=50&do=true
+# STEG 5: http://ukm.no/wp-admin/network/admin.php?page=UKMA_ny_sesong&start=0&stop=10&do=true
 
-if(!isset($_GET['do']))
+if(!isset($_GET['do']) && !isset($_GET['init'] )) {
+	echo TWIG('dash.twig.html', array() , dirname(dirname(__FILE__)) );
+	die();
+}
+
+if( isset($_GET['do']) && $_GET['do'] == 'wordpress' ) {
+	require_once('ny_sesong_wordpress.php');
+	die('FULLFØRT');
+}
+/*
+	if(!isset($_GET['do']))
 	die('"do" mangler som get-parameter. Du husket å kjøre DB-sesong?(init)');
-
+*/
 if(isset($_GET['init'])) {
 	require_once('ny_ukmdb_sesong.php');
+	die('NY SESONG ER NÅ KLAR! HUSK Å OPPDATERE INNSTILLINGER');
 }
 	
 if(!isset($_GET['stop']))	
@@ -30,189 +42,114 @@ $monstringer = $monstringer->etter_sesong($season);
 
 ## OPPRETT FYLKESBRUKERE
 echo '<h2>Oppretter fylkesbrukere</h2>';
-$fylkebrukere = UKMA_SEASON_fylkesbrukere();
+$fylkebrukere = UKMA_SEASON_fylkesbrukere( $_GET['start'] == 0 );
 
 $teller = 0;
 $START = (int)$_GET['start'];
 $STOP = (int)$_GET['stop'];
 
+echo '<h2>Oppretter mønstringssider for '. $season .'-sesongen</h2>';
 if($STOP - $START > 80)
 	die('Beklager, du pr&oslash;ver &aring; opprette for mange m&oslash;nstringer p&aring; en gang!');
 	
+if( $START > 0 ) {
+	echo '<p>Hopper over ';
+}
+
+if( mysql_num_rows( $monstringer ) == 0 ) {
+	die('<div class="alert alert-danger">Beklager, fant ingen mønstringer!</div>');
+}
 while($monstring = mysql_fetch_assoc($monstringer)) {
 	$teller++;
-	if($teller < $START) {
-#		echo 'Hopper over ' . $teller . '<br />';
+	if($teller <= $START) {
+		echo $teller . ', ';
 		continue;
 	} elseif($teller > $STOP) {
-		die('<h1 style="margin: 100px;">N&aring;dd stoppintervall</h1>'
-			.'<a href="?page='.$_GET['page']
-				.'&do'
-				.'&start='.((int)$_GET['stop']+1)
-				.'&stop='.(($_GET['stop']+1)+(((int)$_GET['start']-(int)$_GET['stop'])*-1))
-				.'">Neste</a>'
-			);
+		break;
 	}
+	echo '</p>';
+	
 	
 	## HENT INFO OM MØNSTRING
 	$m = UKMA_SEASON_monstringsinfo($monstring['pl_id']);
 	$m['pl_name'] = utf8_encode($m['pl_name']);
 	$m['fylke_navn'] = utf8_encode($m['fylke_navn']);
 	
+	echo '<fieldset><legend>Mønstring '. ($teller-$START) .' av '. ($STOP-$START) .' (nr '. $START .' til '. $STOP .') </legend>';
 	# det er en lokalmønstring
 	if($m['type'] == 'kommune') {
-		echo '<h3>Oppretter lokalmønstring '.$teller.'</h3>'
-			.'NAVN: '.$m['pl_name'] . '<br />';
+		echo ' '. (empty($m['pl_name']) ? '<span class="alert-danger">Mønstring uten navn</span>' : $m['pl_name'] ) .' <span class="badge">Lokalmønstring</span> <br />';
 		
-		echo 'Mønstringen har følgende kommuner <br />';
-		echo '<pre>'; var_dump( $m['kommuner'] ); echo '</pre>';
+		echo ' <label>KOMMUNER:</label><br />';
 		## HENTER ALLE KOMMUNER I MØNSTRINGEN
 		$k = UKMA_SEASON_monstringsinfo_kommuner($m['kommuner']);
 		# Array med k[id], k[name], k[url]
+		foreach( $k as $kommune ) {
+			echo ' &nbsp; <label>'. $kommune['name']. ': </label> '. $kommune['url'] .' <span class="badge">KommuneID:'. $kommune['id'] .'</span><br />';
+		}
 
+		echo ' <label>BRUKERE:</label><br />';
 		## GENERER BRUKERLISTE FOR SIDEN
 		$i = UKMA_SEASON_evaluer_kommuner($k, $m['fylke_id']);
 		
 		$brukere = $i['brukere'];
 		# Array med brukerID'er til lokalmønstringen
 		
-		$namelist = $i['namelist'];
 		# Kommaseparert navneliste over kommuner i mønstringen
+		$namelist = $i['namelist'];
+		echo ' <label>KOMMUNE-LISTE:</label> '. $namelist .'<br />';
 
-		$idlist = $i['idlist'];
 		# Kommaseparert ID-liste over kommuner i mønstringen
-		
-		$rewrites = $i['rewrites'];
+		$idlist = $i['idlist'];
+		echo ' <label>KOMMUNEID-LISTE:</label> '. $idlist .'<br />';		
+
 		# Array med URL-vennlige kommunenavn for mod rewrite
-		
-		## OPPRETT SIDEN
-		echo '<br />Oppretter blogg<br />';
-		$blogg = UKMA_SEASON_opprett_blogg($namelist, $m['pl_id'], 'kommune', $m['fylke_id'], $idlist, $season);
-	
-		echo 'Legger til '. (is_array( $brukere ) ? sizeof( $brukere ) : 0 ).' brukere <br />';
-		if(is_array( $brukere ) ) {
-			foreach( $brukere as $bruker_for_fun_debug ) {
-				echo ' &nbsp; BrukerID: ';
-				var_dump($bruker_for_fun_debug);
-				echo ' <br />';
+		$rewrites = $i['rewrites'];
+		echo ' <label>URL REWRITES:</label><br />';
+		if( is_array($rewrites) ) {
+			foreach( $rewrites as $rewrite ) {
+				echo ' &nbsp; '. $rewrite .'<br />';
 			}
 		}
+		
+				
+		## OPPRETT SIDEN
+		echo '<br /><label>OPPRETTER BLOGG</label><br />';
+		$blogg = UKMA_SEASON_opprett_blogg($namelist, $m['pl_id'], 'kommune', $m['fylke_id'], $idlist, $season);
+	
+		echo '<label>LEGGER TIL BRUKERE</label><br />';
 		## LEGG TIL BRUKERNE TIL SIDEN
 		UKMA_SEASON_brukere($blogg, $brukere, $m['fylke_id'], $fylkebrukere);
 	
-		echo 'Legger til re-writes<br />';
+		echo '<label>LEGGER TIL REWRITES</label><br />';
 		## LEGG TIL RE-WRITES
 		UKMA_SEASON_rewrites($m['fylke_name'], $rewrites, $m['pl_id']);
 		
 	###################
 	## VI SNAKKER FYLKE
 	} else {
-		echo '<h3>Oppretter fylkesmønstring '.$teller.'</h3>'
-			.'NAVN: '.$m['pl_name'] . '<br />';
+		echo $m['pl_name'] .' <span class="label-warning">FYLKESMØNSTRING</span> <br />';
 		## OPPRETT SIDEN
-		echo '<br />Oppretter blogg<br />';
+		echo '<br /><label>OPPRETTER BLOGG</label><br />';
 		$blogg = UKMA_SEASON_opprett_blogg($m['pl_name'], $m['pl_id'], 'fylke', $m['pl_fylke'], '', $season);
 			
-		echo 'Legger til brukere <br />';
+		echo '<label>LEGGER TIL BRUKERE</label><br />';
 		## LEGG TIL BRUKERNE TIL SIDEN
 		UKMA_SEASON_brukere($blogg, array(), $m['fylke_id'], $fylkebrukere);
+
+		echo '<label>SETTER STANDARDSIDE FOR BRUKERE</label><br />';
+		$fylkesbruker = $fylkebrukere[ $m['pl_fylke'] ];
+		echo ' &nbsp; Sett primary site ID = '. $blogg .' for bruker <span class="badge">'. $fylkesbruker .'</span><br />';
+		update_user_meta( $fylkesbruker, 'primary_blog', $blogg);
 		
-		echo 'URL-adresse<br />';
+		echo ' <label>URL REWRITES:</label><br />';
 		echo UKMA_SEASON_urlsafe($m['pl_name']);
 
 	}
-	#die();
+	echo '</fieldset>';
 }
 
-
-############################################################################################################################
-## FUNKSJONER
-############################################################################################################################
-################################################
-## LAGER FYLKESBRUKERNE
-################################################
-function UKMA_SEASON_fylkesbrukere() {
-	global $wpdb;
-	$fylker = new SQL("SELECT * FROM `smartukm_fylke`");
-	$fylker = $fylker->run();
-	## LOOPER ALLE FYLKER OG OPPRETTER BRUKER OM DEN IKKE FINNES
-	while($f = mysql_fetch_assoc($fylker)) {
-		$name = UKMA_SEASON_urlsafe_non_charset($f['name']);
-
-		$password = UKM_ordpass();
-		$bruker = $wpdb->get_row("SELECT * FROM `ukm_brukere`
-									  WHERE `b_fylke` = '".$f['id']."'");
-		if(is_object($bruker)) {
-			$email = $bruker->b_email;
-		} else {
-			$email = UKMA_SEASON_urlsafe_non_charset($f['name']) .'@fylkefake.ukm.no';
-		}
-		
-		## Om brukeren finnes, legg til ID i array og gå pent videre
-		if(username_exists( $name )) {
-			$userIDnow = username_exists($name);
-			$users[$f['id']] = $userIDnow;
-			remove_user_from_blog($userIDnow, 1);
-		} else {
-			// 23.09.2014 BURDE MULIGENS FLYTTES UT AV ELSE OG OVER IF
-			// Klarteksttabell mister brukernavn
-			$brukerinfo = array('b_name'=>$name,
-								'b_password'=>$password,#wp_generate_password(6,false,false),
-								'b_email'=>$email,
-								'b_kommune'=>0,
-								'b_fylke' => $f['id']);
-			// 23.09.2014 EO BURDE MULIGENS FLYTTES UT AV ELSE OG OVER IF
-			## Opprett bruker
-			echo $name . ' - ';
-			$user_id = wp_create_user( $brukerinfo['b_name'], $brukerinfo['b_password'], $brukerinfo['b_email'] );
-			if(!is_string($user_id)&&!is_numeric($user_id))
-				var_dump($user_id);
-			else
-				echo $user_id . '<br />';
-			## Oppdater klartekstarray
-			$brukerinfo['wp_bid'] = $user_id;
-			
-			## LAGRE I KLARTEKSTTABELL
-			if(is_object($bruker)) {
-				$wpdb->update('ukm_brukere',
-						  $brukerinfo,
-						  array('b_id'=>$bruker->b_id));
-			} else {
-				$wpdb->insert('ukm_brukere',$brukerinfo);
-			}
-			## OPPRETTHOLD LISTE OVER FYLKESBRUKERE
-			$users[$f['id']] = $user_id;
-			remove_user_from_blog($user_id, 1);
-		}
-	}
-	return $users;
-}
-############################################################################################################################
-## MØNSTRINGEN
-################################################
-## HENTER INFO OM MØNSTRINGEN
-################################################
-function UKMA_SEASON_monstringsinfo($pl_id) {
-	$m = new monstring($pl_id);
-	return $m->info();
-}
-################################################
-## HENTER INFO OM HVILKE KOMMUNER SOM ER 
-## MED I MØNSTRINGEN
-################################################
-function UKMA_SEASON_monstringsinfo_kommuner($kommuner) {
-	$list = array();
-	if(is_array($kommuner))
-		foreach($kommuner as $trash => $kommune) {
-			$k = $kommune;
-			$safestring = preg_replace("/[^A-Za-z0-9-]/","",
-								str_replace(array('æ','ø','å','Æ','Ø','Å'),
-											array('a','o','a','A','O','A'), 
-											$k['name'])
-									  );
-			$k['url'] = $safestring; #UKMA_SEASON_urlsafe($k['name']);
-			$list[] = $k;
-		}
-	return $list;
-}
+echo '<h2>Opprett neste</h2>';
+$intervall = $_GET['stop'] - $_GET['start'];
+echo '<a href="?page='. $_GET['page'] .'&start='. $_GET['stop'] .'&stop='. ($_GET['stop']+$intervall).'&do=true">Opprett de neste '. $intervall .'</a>';
 ?>

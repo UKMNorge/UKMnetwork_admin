@@ -1,0 +1,59 @@
+<div class="col-xs-11 col-sm-8">
+	<fieldset>
+		<legend>Mønstring {{numRowCounter}} av {{ numRows }}</legend>
+		<div class="col-xs-offset-1">
+			<label>{{ pl_name }} <span class="badge">{{ type }}</span></label>
+			<ul>
+				<li>
+					<label>Gammel ID (tidligere pl_id): </label> {{ pl_id_old }}
+				</li>
+				<li>
+					<label>Ny ID (pl_id): </label> {{ pl_id }}
+				</li>
+				<li>
+					<label>Sesong (season): </label> {{ season }}
+				</li>			
+				<li>
+					<label>Fylke (pl_fylke): </label> {{ pl_fylke }}
+					<p class="help">0 for kommune, faktisk ID for fylke</p>
+				</li>
+				
+				<li>
+					<label>Kommune (pl_kommune): </label> {{ pl_kommune }}
+					<p class="help">Stort tall for kommune, 0 for fylke</p>
+				</li>
+				
+							
+				<li>
+					<label>Starter (pl_start): </label> {{ pl_start }}
+					<p class="help">0 = ikke registrert mønstring</p>
+				</li>
+				<li>
+					<label>Slutter (pl_stop): </label> {{ pl_stop }}
+					<p class="help">0 = ikke registrert mønstring</p>
+				</li>
+		
+				<li>
+					<label>Sted (pl_place): </label> {{ pl_place }}
+				</li>
+		
+		
+				<li>
+					<label>Påmeldingsfrist 1 (pl_deadline): </label> {{ pl_deadline|date('d.m.Y') }}
+					<p class="help">Skal være lik standardfrist</p>
+				</li>
+				<li>
+					<label>Påmeldingsfrist 2 (pl_deadline2): </label> {{ pl_deadline2|date('d.m.Y') }}
+					<p class="help">pl_deadline</p>
+				</li>
+			</ul>
+			
+			<div class="alert alert-{{ num_contact_p_relations > 0 ? 'success' : 'danger' }}">
+				Opprettet {{ num_contact_p_relations }} kontaktperson-relasjoner
+			</div>
+			<div class="alert alert-{{ type == 'kommune' and num_kommune_relations > 0 ? 'success' : 'danger' }}">
+				Opprettet {{ num_kommune_relations }} kommune-relasjoner
+			</div>
+		</div>
+	</fieldset>
+</div>

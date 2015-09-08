@@ -1,0 +1,43 @@
+<h1>Opprett ny sesong</h1>
+
+<div class="row">
+	<div class="alert alert-danger col-xs-12 col-sm-8">
+		<h4>Dette MÅ gjøres i riktig rekkefølge!</h4>
+		<p>Husk også å ta en ekstra backup eller to før du starter</p>
+	</div>
+</div>
+
+<h2>Forberedelser</h2>
+<ol>
+	<li>Lag HTMl-kopi av nettsiden <a href="https://www.httrack.com/" target="_blank">HTTracker software</a></li>
+	<li>Opprett en ny konto på cPanel ({{"now"|date('Y')}}.ukm.no), og last opp HTML-kopien dit</li>
+	<li>Legg inn index.php for videresending fra forside til derdubor (se forrige år)</li>
+	<li>Legg inn videresending i wp-login-fila</li>
+	<li>Oppdater siden <a href="/tidligere-ar/" target="_blank">UKM.no/tidligere-ar</a> med lenker fra {{"now"|date('Y')}}-sesongen
+	<li>Oppdater siden "<a href="/din_monstring/" target="_blank">der du bor</a>", med informasjon om at vi setter opp ny sesong, og at man finner {{"now"|date('Y')}}-sidene på <a href="/tidligere-ar/" target="_blank">UKM.no/tidligere-ar</a></li>
+</ol>
+<h2>Backup og opprydding</h2>
+<ol>
+	<li>Kopier brukernavn-tabellen ukmno_wp2012.ukm_brukere til ukmno_wp2012.ukm_brukere_{{"now"|date('Y')}}
+	<li>Kopier databasen ukmno_ss3 til ukmno_ss3_bu{{"now"|date('Y')}}</li>
+	<li>Kopier databasen ukmno_wp2012 til ukmno_wp2012_bu{{ "now"|date('Y')}}</li>
+	<li>Slett alle gamle nettsider fra wordpress
+		<ol>
+			<li>Network admin: nettsider: søk opp pl* og slett alle disse (LES OVER LISTEN!)</li>
+			<li>Network admin: nettsider: slett alle fylkessider manuelt (inkl. testfylke)</li>
+		</ol>
+	</li>
+</ol>
+<h3>Ny sesong</h3>
+<div class="row">
+	<p class="alert alert-warning col-xs-12 col-sm-8">
+		Nå begynner det du kun kan gjøre én gang, og disse må gjøres etter hverandre i samme arbeidsøk
+	</p>
+</div>
+<ol>
+		<li>Initier ny sesong <a href="/wp-admin/network/admin.php?page=UKMA_ny_sesong&do=true&init=true">[klikk her for å starte]</a></li>
+		<li>Oppdater wordpress <a href="/wp-admin/network/admin.php?page=UKMA_ny_sesong&do=wordpress">[klikk her for å starte]</a></li>
+		<li>Opprett nye mønstringssider <a href="/wp-admin/network/admin.php?page=UKMA_ny_sesong&start=0&stop=50&do=true">[klikk her for å starte]</a></li>
+		<li>Oppdater URL-adresser <a href="/wp-admin/network/admin.php?page=UKMA_rewrite">[klikk her for å re-generere adresser]</a></li>
+		<li>Fiks bruker for Lærdal og Lardal <a href="http://github.com/UKMNorge/UKMnetwork_admin/issues/4" target="_blank">[les mer]</a></li>
+</ol>

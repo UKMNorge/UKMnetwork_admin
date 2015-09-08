@@ -9,6 +9,7 @@ function pd($var) {
 	echo '</pre>';
 }
 error_reporting(E_ALL);
+global $activePlaces_numRows, $activePlaces_numRowCounter, $newDeadline, $newFylkeDeadline;
 ### UKM SEASON-CREATE ###
 # ACTIVE SEASON IS THE ONE YOU'RE LEAVING
 # NEW SEASON IS THE ONE YOU'RE ACTIVATING
@@ -25,7 +26,7 @@ error_reporting(E_ALL);
 error_reporting(E_ALL);
 
 # DATES OF THE SEASON
-$activeSeason 			= (int)date("Y");#$ss3->getConf('smartukm_season');			# INT OF THIS SEASON
+$activeSeason 			= (int)date("Y")-1;#$ss3->getConf('smartukm_season');			# INT OF THIS SEASON
 $activeStart 			= mktime(0,0,0,11,1,($activeSeason-1));					# THE FIRST NOVEMBER THE ACTIVE SEASON
 $daysInActiveOctober 	= cal_days_in_month(CAL_GREGORIAN, 10, $activeSeason);	# THE LAST DAY OF THE ACTIVE SEASON
 $activeStop 			= mktime(0,0,0,10, $daysInActiveOctober, $activeSeason);# THE DATE OF THE LAST DAY OF THE ACTIVE SEASON
@@ -36,14 +37,6 @@ $newDeadline			= mktime(0,0,0,1,1,$newSeason);							# DEFAULT DEADLINE OF NEW S
 $newFylkeDeadline 		= mktime(0,0,0,3,1,$newSeason);							# DEFAULT DEADLINE FOR FM THE NEW SEASON, THE 1st OF MARCH
 $_GET['season'] = $newSeason;
 
-echo "<h1>INIT VALUES</h1>";
-echo "activeSeason: " . $activeSeason . "<br />";
-echo "activeStart: " . date("d.m.Y", $activeStart) . "<br />";
-echo "activeStop: " . date("d.m.Y", $activeStop) . "<br />";
-echo "<br />";
-echo "newSeason: " . $newSeason . "<br />";
-echo "newDeadline: " . date("d.m.Y", $newDeadline) . "<br />";
-echo "newFylkeDeadline: " . date("d.m.Y", $newFylkeDeadline) . "<br />";
 
 ###################################################################################################
 ###################################################################################################
@@ -61,8 +54,22 @@ $activePlaces = new SQL("SELECT `pl_id`
 				   FROM `smartukm_place`
 				   WHERE `season` = '#sesong'",
 				   array('sesong'=>$activeSeason));
-#echo $activePlaces->debug();
+$activePlaces_debug = $activePlaces->debug();
 $activePlaces = $activePlaces->run();
+
+$activePlaces_numRows = mysql_num_rows($activePlaces);
+$activePlaces_numRowCounter = 0;
+
+$ny_sesong_data = array('activeSeason' => $activeSeason,
+						'activeStart' => $activeStart,
+						'activeStop' => $activeStop,
+						'newSeason' => $newSeason,
+						'newDeadline' => $newDeadline,
+						'newFylkeDeadline' => $newFylkeDeadline,
+						'sql' => $activePlaces_debug,
+						'numRows' => $activePlaces_numRows);
+echo TWIG('ny_sesong/steg1_top.twig.html', $ny_sesong_data, dirname( dirname( __FILE__ ) ) );
+
 # LOOP ALL PLACES AND CREATE DUPLICATES FOR THE NEW SEASON
 #for($i=0; $i<$activePlaces[1]; $i++) {
 while($r = mysql_fetch_assoc($activePlaces)){
@@ -95,7 +102,6 @@ while($r = mysql_fetch_assoc($activePlaces)){
 }
 
 
-die('NY SESONG ER NÅ KLAR! HUSK Å OPPDATERE INNSTILLINGER');
 		
 ###################################################################################################
 ###################################################################################################
@@ -149,11 +155,11 @@ function createPlace($att, $contactPs, $kommunerel,$old_pl_id) {
 		}
 	}
 	$att['season'] = $_GET['season'];
-	echo "<h2>THE PLACE ". $att['pl_name'] . " (tidl ".$old_pl_id."):</h2>";
+#	echo "<h2>THE PLACE ". $att['pl_name'] . " (tidl ".$old_pl_id."):</h2>";
 	$sql = new SQLins('smartukm_place');
 	foreach($att as $key => $val) {
 		$sql->add($key, utf8_encode($val));
-		echo "$key => $val<br />";	
+		#echo "$key => $val<br />";	
 	}
 #	echo $sql->debug();
 	$res = $sql->run();
@@ -169,9 +175,9 @@ function createPlace($att, $contactPs, $kommunerel,$old_pl_id) {
 #		echo $sql2->debug();
 		$sql2->run();
 	}
-	echo "<br />Inserted $i contact p relations";
+	#echo "<br />Inserted $i contact p relations";
 	## INSERT ALL KOMMUNE RELATIONS
-	$j = 'Dette er en fylkesm&oslash;nstring';
+	$j = false;#'Dette er en fylkesm&oslash;nstring';
 	if(is_array($kommunerel)) {
 		for($j=0; $j < sizeof($kommunerel); $j++) {
 			$sql3 = new SQLins('smartukm_rel_pl_k');
@@ -182,7 +188,24 @@ function createPlace($att, $contactPs, $kommunerel,$old_pl_id) {
 			$sql3->run();
 		}
 	}
-	echo "<br />Inserted $j kommune relations";
+#	echo "<br />Inserted $j kommune relations";
+	global $activePlaces_numRows, $activePlaces_numRowCounter;
+	$activePlaces_numRowCounter++;
+	$pldata = array_merge($att, array(	'type' => ($j === false ? 'fylke' : 'kommune'),
+										'pl_id_old' => $old_pl_id,
+										'num_contact_p_relations' => $i,
+										'num_kommune_relations' => $j,
+										'numRows' => $activePlaces_numRows,
+										'numRowCounter' => $activePlaces_numRowCounter,
+
+										'pl_id' => $id,
+										'pl_name' => utf8_encode( $att['pl_name'] ),
+										'pl_place' => utf8_encode( $att['pl_place'] ),
+
+									)
+						);
+	
+	echo TWIG('ny_sesong/steg1_monstring.twig.html', $pldata, dirname( dirname( __FILE__ ) ) );
 	
 	return $id;
 } 
