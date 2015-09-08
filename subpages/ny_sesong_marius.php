@@ -150,6 +150,7 @@ while($monstring = mysql_fetch_assoc($monstringer)) {
 }
 
 echo '<h2>Opprett neste</h2>';
-$intervall = $_GET['stop'] - $_GET['start'];
+#$intervall = $_GET['stop'] - $_GET['start'];
+$intervall = 10;
 echo '<a href="?page='. $_GET['page'] .'&start='. $_GET['stop'] .'&stop='. ($_GET['stop']+$intervall).'&do=true">Opprett de neste '. $intervall .'</a>';
 ?>
