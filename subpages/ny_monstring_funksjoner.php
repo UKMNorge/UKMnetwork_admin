@@ -129,7 +129,7 @@ function UKMA_SEASON_opprett_blogg($navn, $pl_id, $type, $fylkeid, $kommuneider=
 	if($type == 'kommune')
 		$path = '/pl'.$pl_id.'/';
 	else
-		$path = '/'.strtolower(UKMA_SEASON_urlsafe_non_charset($navn)).'/';
+		$path = '/'.strtolower(UKMA_SEASON_urlsafe(utf8_encode($navn))).'/';
 	
 	echo ' &nbsp; '. $path .'<br />';
 	
