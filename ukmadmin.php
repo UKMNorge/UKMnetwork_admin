@@ -17,12 +17,6 @@ function UKMA_sesong() {
 	require_once('subpages/ny_sesong_marius.php');
 }
 
-function UKMA_brukere() {
-	UKM_loader('inc/toolkit');
-	global $wpdb;
-	require_once('subpages/brukere_oppdater.php');
-}
-
 
 ##  Adds UKMA Admin panel in Network Admin
 function UKMA_add_site_admin() {
@@ -30,111 +24,19 @@ function UKMA_add_site_admin() {
 	global $menu; # henter admin menyen
 	global $filliste;
 	$menu[30] = array('', 8, 'separator', '', 'wp-menu-separator');
-	
-	# functions
-	# add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position )
-	# add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function )
-	## ADD SUBMENU TO SITE-OPTIONS
-	add_submenu_page( 'sites.php', 'Oppdater/sett blog option', 'Set option', 'superadministrator', 'UKMA_setOpt', 'UKMA_setOpt' );	
 
 	add_menu_page('UKM Site-admin', 'UKM Site-admin', 'administrator', 'UKMA_site_admin', 'UKMA_site_admin_gui', 'http://ico.ukm.no/hus-menu.png', 39);
 
 	$page_season = add_submenu_page( 'UKMA_site_admin', 'Opprett sesong', 'Opprett sesong', 'superadministrator', 'UKMA_ny_sesong', 'UKMA_sesong' );
 	add_action( 'admin_print_styles-' . $page_season, 'UKMA_scripts_and_styles' );
 
-	add_submenu_page( 'UKMA_site_admin', 'Oppdater kortadresser', 'Oppdater kortadresser', 'superadministrator', 'UKMA_rewrite', 'UKMA_rewrite' );
-	add_submenu_page( 'UKMA_site_admin', 'Synkroniser passord', 'Synkroniser passord', 'superadministrator', 'UKMA_password_sync', 'UKMA_password_sync' );
-	add_submenu_page( 'UKMA_site_admin', 'Oppdater brukere', 'Oppdater brukere', 'superadministrator', 'UKMA_brukere', 'UKMA_brukere' );
-#	add_submenu_page( 'UKMA_site_admin', 'Opprett m&oslash;nstring', 'Opprett m&oslash;nstring', 'superadministrator', 'UKMA_ny_monstring', 'UKMA_ny_monstring' );
-#	add_submenu_page( 'UKMA_site_admin', 'Trekk ut kommune', 'Trekk ut kommune', 'superadministrator', 'UKMA_trekkut', 'UKMA_trekkut' );
-	add_submenu_page( 'UKMA_site_admin', 'Roller og rettigheter', 'Roller og rettigheter', 'superadministrator', 'UKMA_roles_and_capabilities', 'UKMA_roles_and_capabilities' );
-	
-	
-	add_menu_page('UKM Toppfaner', 'UKM Toppfane', 'administrator', 'UKM_toppfaner', 'UKM_toppfaner', 'http://ico.ukm.no/hus-menu.png', 40);
-
-}
-
-function UKMA_roles_and_capabilities() {
-	require_once('subpages/roles_and_capabilities.php');
-	UKM_roles_and_capabilities_inner();
-}
-
-function UKMA_trekkut() {
-	require_once('subpages/trekkut.php');
-	if(isset($_GET['kid']) && isset($_GET['pl_id']))
-		echo UKMA_trekkut_steg2($_GET['pl_id'],$_GET['kid']);
-	else
-		echo UKMA_trekkut_steg1();
-}
-
-function UKMA_ny_monstring() {
-	require_once('UKM/sql.class.php');
-	require_once('subpages/ny_monstring.php');
-	
-	if(isset($_GET['k']))
-		echo UKMA_ny_monstring_valgt($_GET['k']);
-	else
-		echo UKMA_ny_monstring_ureg();	
 }
 
 
-add_action( 'admin_head', 'UKMA_favicon' );
-function UKMA_favicon() {
-	echo '<link rel="shortcut icon" href="http://ico.ukm.no/wp-admin_favicon.png" />';
-}
-
-// BRUKERES PASSORDHÅNDTERING
-add_action('profile_update', 'UKMA_passordsak');
-function UKMA_passordsak() {
-	global $wpdb;
-
-	if($_POST['pass1']==$_POST['pass2']&&!empty($_POST['pass1'])) {
-		$wpdb->update('ukm_brukere',
-					array('b_password'=>$_POST['pass1']),
-					array('wp_bid'=>$_POST['user_id']));
-	}
-}
-
-function UKMA_password_sync() {
-	require_once('subpages/password_sync.inc.php');
-}
-
-
-function UKMA_setOpt(){
-	require_once('subpages/setopt.php');
-}
 
 add_action('network_admin_menu', 'UKMA_add_site_admin');
 
 ## GUI oppsett ny sesong
-function UKMA_rewrite() {
-	echo '<h1>Re-genererer site rewrites</h1>';
-	UKMA_rewrite_update_siteurl();
-}
-
-function UKMA_rewrite_update_siteurl() {
-	global $wpdb, $wp_rewrite;
-	$sites = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->blogs", array()));
-	$start = (isset($_GET['start'])?$_GET['start']:150);
-	$i = 0;
-	foreach ( $sites as $site ) {
-		$i++;
-		if($i==$start+150)
-			die('<a href="?page='.$_GET['page'].'&start='.($start+150).'">Neste 150</a>');
-		if($i < $start){
-			echo 'hopper over '. $i .'<br />';
-			continue;
-		}
-		$url = get_site_url($site->blog_id);
-		echo 'Side '. get_blog_option($site->blog_id, 'blogname') . '<br />';
-		switch_to_blog($site->blog_id);
-		$wp_rewrite->init();
-		$wp_rewrite->flush_rules();
-		restore_current_blog();
-	}	
-
-	echo '<strong>Totalt oppdatert '. $i .' sites</strong>';
-}
 
 
 function UKMA_ny_sesong_gui(){
